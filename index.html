@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>2025년 팀 단위 조직개발 W/S 스케줄러</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #fff8f0;
+      color: #333;
+      padding: 30px;
+    }
+
+    h1 {
+      color: rgb(245, 80, 0);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    h1 img {
+      height: 60px;
+    }
+
+    label {
+      display: block;
+      margin: 15px 0 5px;
+      font-weight: bold;
+    }
+
+    select, input, textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .form-section {
+      margin-bottom: 20px;
+    }
+
+    button {
+      background-color: rgb(255, 170, 0);
+      border: none;
+      color: white;
+      padding: 12px 20px;
+      font-size: 16px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: rgb(85, 71, 0);
+    }
+  </style>
+</head>
+<body>
+
+  <h1><img src="./2D_읏맨_01.png" alt="읏맨">2025년 팀 단위 조직개발 W/S 스케줄러</h1>
+
+  <form id="scheduleForm">
+    <div class="form-section">
+      <label for="team">팀 선택</label>
+      <select id="team" name="team" required>
+        <option value="">-- 팀을 선택해주세요 --</option>
+        <option>검사팀</option>
+        <option>대전중앙지점</option>
+        <option>수신팀</option>
+        <option>안산지점</option>
+        <option>여신감리팀</option>
+        <option>플랫폼기획팀</option>
+        <option>보안기획팀</option>
+        <option>시스템관리1팀</option>
+        <option>인재개발팀</option>
+        <option>재무회계팀</option>
+        <option>전략기획팀</option>
+      </select>
+    </div>
+
+    <div class="form-section">
+      <label for="date">팀 일정 선택 (5월 19일 ~ 30일 평일만)</label>
+      <input type="date" id="date" name="date" required>
+    </div>
+
+    <div class="form-section">
+      <label for="time">시작 시간 선택 (3시간 자동 배정)</label>
+      <input type="time" id="time" name="time" min="09:00" max="15:00" required>
+    </div>
+
+    <div class="form-section">
+      <label for="name">팀원 이름</label>
+      <input type="text" id="name" name="name" placeholder="이름을 입력하세요" required>
+    </div>
+
+    <div class="form-section">
+      <label for="note">추가 전달 사항</label>
+      <textarea id="note" name="note" rows="3" placeholder="특이사항 또는 요청사항을 입력하세요"></textarea>
+    </div>
+
+    <button type="submit">신청하기</button>
+  </form>
+
+  <script>
+    document.getElementById('date').addEventListener('change', function(e) {
+      const day = new Date(this.value).getDay();
+      if (day === 0 || day === 6 || this.value < '2025-05-19' || this.value > '2025-05-30') {
+        alert('5월 19일~30일 평일만 선택 가능합니다.');
+        this.value = '';
+      }
+    });
+
+    document.getElementById('scheduleForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+
+      fetch('https://script.google.com/macros/s/YOUR_DEPLOYED_SCRIPT_URL/exec', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.text())
+      .then(result => {
+        alert('신청이 완료되었습니다!');
+        this.reset();
+      })
+      .catch(error => {
+        console.error('오류 발생:', error);
+        alert('신청 중 오류가 발생했습니다.');
+      });
+    });
+  </script>
+
+</body>
+</html>
