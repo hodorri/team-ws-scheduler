@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>팀 워크숍 신청 현황</title>
+  <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css' rel='stylesheet' />
+  <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js'></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <style>
+    body {
+      font-family: 'Spoqa Han Sans Neo', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+      margin: 40px;
+      padding: 0;
+      background: #fffdf7;
+      color: #333;
+    }
+    h1 {
+      color: rgb(245, 80, 0);
+      font-size: 28px;
+    }
+    #calendar {
+      max-width: 1000px;
+      margin: 40px auto;
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <h1>2025년 팀 워크숍 신청 현황</h1>
+  <div id='calendar'></div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const calendarEl = document.getElementById('calendar');
+      const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        locale: 'ko',
+        headerToolbar: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'dayGridMonth,listWeek'
+        },
+        events: async function (fetchInfo, successCallback, failureCallback) {
+          try {
+            const response = await axios.get('https://opensheet.elk.sh/1_HRjqh3rrWtVYcDvJyGXyvAw_qWPptGwoYbBLeZSu8o/시트1');
+            const rows = response.data;
+
+            const events = rows.map(row => {
+              return {
+                title: `${row.team} (${row.name})`,
+                start: row.datetime.split('~')[0].trim(),
+                end: row.datetime.split('~')[1].trim(),
+                allDay: false
+              };
+            });
+
+            successCallback(events);
+          } catch (error) {
+            console.error('데이터 불러오기 실패:', error);
+            failureCallback(error);
+          }
+        }
+      });
+
+      calendar.render();
+    });
+  </script>
+</body>
+</html>
