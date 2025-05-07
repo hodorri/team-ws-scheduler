@@ -49,13 +49,17 @@
             const rows = response.data;
 
             const events = rows.map(row => {
-              return {
-                title: `${row.team} (${row.name})`,
-                start: row.datetime.split('~')[0].trim().split('(')[0].trim(),
-                end: row.datetime.split('~')[1].trim(),
-                allDay: false
-              };
-            });
+  const startRaw = row.datetime.split('~')[0].trim().split('(')[0].trim(); // ex. 2025-05-22 13:00
+  const endTime = row.datetime.split('~')[1].trim(); // ex. 16:00
+  const endDateTime = `${startRaw.split(' ')[0]} ${endTime}`; // ex. 2025-05-22 16:00
+
+  return {
+    title: `${row.team} (${row.name})`,
+    start: startRaw,
+    end: endDateTime,
+    allDay: false
+  };
+});
 
             successCallback(events);
           } catch (error) {
