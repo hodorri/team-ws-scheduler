@@ -51,7 +51,7 @@
             const events = rows.map(row => {
               return {
                 title: `${row.team} (${row.name})`,
-                start: row.datetime.split('~')[0].trim(),
+                start: row.datetime.split('~')[0].trim().split('(')[0].trim(),
                 end: row.datetime.split('~')[1].trim(),
                 allDay: false
               };
