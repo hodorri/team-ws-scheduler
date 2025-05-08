@@ -13,16 +13,16 @@
     @font-face { font-family: 'OKFont'; src: url('오케이체 Light.ttf') format('truetype'); font-weight: 300; }
 
     body { font-family: 'OKFont', sans-serif; background-color: #fff8f0; color: #333; padding: 30px; }
-    h1 { color: rgb(245, 80, 0); font-size: 36px; font-weight: 700; margin-bottom: 8px; }
+    h1 { color: rgb(245,80,0); font-size: 36px; font-weight: 700; margin-bottom: 8px; }
     label { display: block; margin: 15px 0 5px; font-weight: 500; font-size: 18px; }
     select, input, textarea { width:100%; padding:10px; border:1px solid #ccc; border-radius:8px; font-family:'OKFont'; font-size:12px; font-weight:300; }
     option { font-family:'OKFont'; font-size:12px; font-weight:300; }
-    input::placeholder, textarea::placeholder { font-family:'OKFont'; font-size:12px; font-weight:300; color:#aaa; }
+    input::placeholder, textarea::placeholder { color:#aaa; }
     .form-section { margin-bottom:20px; }
     button { background-color:rgb(255,170,0); border:none; color:#fff; padding:12px 20px; font-size:16px; border-radius:10px; cursor:pointer; }
     button:hover { background-color:rgb(85,71,0); }
 
-    /* 캘린더 스타일 */
+    /* 캘린더 */
     .calendar-container { margin:20px 0; border:1px solid #ccc; border-radius:8px; overflow:hidden; }
     .calendar-header { background:rgb(85,71,0); color:#fff; display:flex; justify-content:space-between; align-items:center; padding:10px 16px; }
     .month-title { font-size:18px; font-weight:bold; }
@@ -32,81 +32,58 @@
     .calendar-weekdays { display:grid; grid-template-columns:repeat(7,1fr); background:#f0f0f0; text-align:center; }
     .calendar-weekdays div { padding:6px 0; font-weight:500; }
     .calendar-grid { display:grid; grid-template-columns:repeat(7,1fr); }
-    .calendar-day { border-top:1px solid #ddd; border-right:1px solid #ddd; min-height:100px; padding:4px; font-size:12px; }
+    .calendar-day { border-top:1px solid #ddd; border-right:1px solid #ddd; min-height:100px; padding:4px; }
     .calendar-day.disabled { background:#fafafa; color:#ccc; }
-    .calendar-day .date-num { font-weight:bold; }
-    .time-slots { margin-top:6px; }
+    .date-num { font-size:12px; font-weight:bold; }
     .time-slot { display:inline-block; margin:2px; padding:4px 6px; font-size:11px; border:1px solid #aaa; border-radius:4px; cursor:pointer; }
     .time-slot.disabled { opacity:0.4; cursor:not-allowed; }
     .time-slot.selected { background:#F55000; color:#fff; border-color:#F55000; }
 
-    /* 예약 현황 스타일 */
+    /* 예약 현황 */
     #bookingList { margin:20px 0; }
-    .booking-card { padding:12px; background:#fff; border:1px solid #ddd; border-radius:6px; margin-bottom:8px; }
+    .booking-card { background:#fff; border:1px solid #ddd; border-radius:6px; padding:12px; margin-bottom:8px; }
     .booking-header { font-weight:bold; color:#554700; margin-bottom:6px; }
-    .booking-info { font-size:12px; color:#555; display:flex; gap:12px; }
+    .booking-info { display:flex; gap:12px; font-size:12px; color:#555; }
 
-    /* 문의 연락처 스타일 */
+    /* 문의 */
     .contact-info { margin-top:40px; font-size:13px; color:#555; line-height:1.8; }
     .contact-info a { color:#555; text-decoration:none; }
   </style>
 </head>
 <body>
   <h1>2025년 팀 단위 조직개발 W/S 스케줄러🕐</h1>
-  <p style="font-size:12px; line-height:1.6; font-weight:300;">
-    신임 리더 여러분, 안녕하세요?<br>
-    성공적인 신임 리더로서의 체크인을 완료하신 것을 진심으로 축하드립니다🎉<br>
-    5/19(월)~5/30(금) 중 참여 가능한 일정을 선택해 주세요! (09:00~18:00)<br>
-    워크숍은 3시간 동안 진행되며, 이미 예약된 슬롯은 선택 불가로 표시됩니다.
-  </p>
+  <p style="font-size:12px; line-height:1.6; font-weight:300;">신임 리더 여러분, 안녕하세요?<br>5/19~5/30 평일 09:00~18:00 중 3시간 워크숍을 예약하세요. 이미 예약된 시간대는 회색으로 표시됩니다.</p>
 
   <form id="scheduleForm">
     <div class="form-section">
       <label for="team">팀 선택</label>
       <select id="team" name="team" required>
-        <option value="">-- 팀을 선택해주세요 --</option>
-        <option>검사팀</option>
-        <option>대전중앙지점</option>
-        <option>수신팀</option>
-        <option>안산지점</option>
-        <option>여신감리팀</option>
-        <option>플랫폼기획팀</option>
-        <option>보안기획팀</option>
-        <option>인프라서비스1팀</option>
-        <option>인재개발팀</option>
-        <option>재무회계팀</option>
-        <option>전략기획팀</option>
+        <option value="">-- 선택 --</option>
+        <option>검사팀</option><option>대전중앙지점</option><option>수신팀</option><option>안산지점</option>
+        <option>여신감리팀</option><option>플랫폼기획팀</option><option>보안기획팀</option><option>인프라서비스1팀</option>
+        <option>인재개발팀</option><option>재무회계팀</option><option>전략기획팀</option>
       </select>
     </div>
-
     <div class="form-section">
       <label for="datetime">팀 워크숍 일정 선택</label>
       <div class="calendar-container">
         <div class="calendar-header">
           <span class="month-title">2025년 5월</span>
-          <div class="legend">
-            <span class="dot available"></span><span>선택 가능</span>
-            <span class="dot disabled"></span><span>불가</span>
-          </div>
+          <div class="legend"><span class="dot available"></span><span>선택 가능</span><span class="dot disabled"></span><span>불가</span></div>
         </div>
-        <div class="calendar-weekdays">
-          <div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div>
-        </div>
+        <div class="calendar-weekdays"><div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div></div>
         <div id="calendarGrid" class="calendar-grid"></div>
       </div>
-      <input type="text" id="datetime" name="datetime" required readonly placeholder="날짜와 시간(시작~종료) 선택">
+      <input type="text" id="datetime" name="datetime" readonly placeholder="YYYY-MM-DD HH:00 ~ HH:00" required>
     </div>
-
     <div class="form-section">
       <label for="name">참여 팀원</label>
-      <input type="text" id="name" name="name" placeholder="팀원의 이름과 직급을 입력하세요" required>
+      <input type="text" id="name" name="name" placeholder="이름, 직급" required>
     </div>
-
     <div class="form-section">
       <label for="note">추가 전달 사항</label>
-      <textarea id="note" name="note" rows="3" placeholder="특이사항 또는 요청사항을 입력하세요"></textarea>
+      <textarea id="note" name="note" rows="3" placeholder="특이사항"></textarea>
     </div>
-
     <button type="submit">신청하기</button>
   </form>
 
@@ -115,109 +92,102 @@
     <h3 class="booking-header">예약 현황</h3>
     <div id="bookingCards"></div>
   </div>
-  <hr style="margin:40px 0; border:none; border-top:1px solid #ddd;">
+
+  <hr style="margin:40px 0; border-top:1px solid #ddd;">
   <div class="contact-info">
     <p>추가 문의사항은 담당자에게 연락 부탁드립니다.</p>
-    <p>
-      인재개발팀 박선우 사원<br>
-      T. <a href="tel:02-3704-9732">02-3704-9732</a><br>
-      E. <a href="mailto:okhrd@okfngroup.com">okhrd@okfngroup.com</a>
-    </p>
+    <p>인재개발팀 박선우 사원<br>T. <a href="tel:02-3704-9732">02-3704-9732</a><br>E. <a href="mailto:okhrd@okfngroup.com">okhrd@okfngroup.com</a></p>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script>
-    (async function(){
-      // 1) 예약 현황 불러오기
-      let bookings = [];
-      try {
-        const res = await fetch('https://script.google.com/macros/s/AKfycbwCYXoZV6Tpv4E8SvHLlDMpvjlHTNDsNiX8AEq2nGJkkRk-QDgZvUCMLT6zKMuJzltX/exec');
-        bookings = await res.json();
-      } catch(e) { console.warn('예약 현황 로드 실패', e); }
+  (async function(){
+    // 공통 변수
+    const URL = 'https://script.google.com/macros/s/AKfycbwCYXoZV6Tpv4E8SvHLlDMpvjlHTNDsNiX8AEq2nGJkkRk-QDgZvUCMLT6zKMuJzltX/exec';
+    const calendarGrid = document.getElementById('calendarGrid');
+    const dateInput = document.getElementById('datetime');
+    const cardsContainer = document.getElementById('bookingCards');
 
-      // 예약된 슬롯 체크 함수
-      function isBooked(day, slot) {
-        const dateStr = `2025-05-${String(day).padStart(2,'0')}`;
-        return bookings.some(b => b.datetime.startsWith(dateStr) && b.datetime.includes(slot));
+    // 데이터 로드 함수
+    async function loadData(){
+      try{
+        const res = await fetch(URL);
+        return await res.json();
+      }catch{
+        return [];
+      }
+    }
+
+    // 렌더링 함수
+    async function render(){
+      const bookings = await loadData();
+      calendarGrid.innerHTML = '';
+      cardsContainer.innerHTML = '';
+
+      // 예약 현황 카드 생성
+      if(bookings.length){
+        bookings.sort((a,b)=>a.datetime.localeCompare(b.datetime));
+        bookings.forEach(b=>{
+          const card = document.createElement('div'); card.className='booking-card';
+          card.innerHTML = `<div class="booking-header">${b.team}</div><div class="booking-info"><span>${b.datetime}</span><span>${b.name}</span></div>`;
+          cardsContainer.appendChild(card);
+        });
+      } else {
+        cardsContainer.innerHTML = '<p>아직 예약된 일정이 없습니다.</p>';
       }
 
-      // 2) 캘린더 렌더링
-      const calendarGrid = document.getElementById('calendarGrid');
-      const dateInput    = document.getElementById('datetime');
-      let selectedEls    = [];
-
+      // 캘린더 생성
       const days = [];
-      for(let d=19; d<=30; d++){
-        const date = new Date(2025,4,d);
-        days.push({ day:d, disabled: date.getDay()===0||date.getDay()===6 });
-      }
+      for(let d=19; d<=30; d++){ const date=new Date(2025,4,d); days.push({day:d,disabled:date.getDay()===0||date.getDay()===6}); }
       const timeSlots = ["09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00"];
 
       days.forEach(({day,disabled})=>{
-        const cell = document.createElement('div');
-        cell.className = 'calendar-day' + (disabled?' disabled':'');
-        const num = document.createElement('div'); num.className='date-num'; num.textContent=day;
-        cell.appendChild(num);
-
+        const cell = document.createElement('div'); cell.className='calendar-day'+(disabled?' disabled':'');
+        const num = document.createElement('div'); num.className='date-num'; num.textContent=day; cell.appendChild(num);
         if(!disabled){
           const wrapper = document.createElement('div'); wrapper.className='time-slots';
           timeSlots.forEach(time=>{
-            const btn = document.createElement('span');
-            const booked = isBooked(day, time);
-            btn.className = 'time-slot' + (booked?' disabled':'');
-            btn.textContent = time;
-
-            if(!booked && time <= '15:00'){
-              btn.addEventListener('click', ()=>{
-                // 이전 선택 해제
-                selectedEls.forEach(el=>el.classList.remove('selected'));
-                selectedEls = [];
-
-                // 3시간 자동 선택
-                const slots = Array.from(wrapper.querySelectorAll('.time-slot'));
-                const startIdx = slots.indexOf(btn);
-                const toSelect = slots.slice(startIdx, startIdx+3);
-                toSelect.forEach(slot=>{
-                  slot.classList.add('selected');
-                  selectedEls.push(slot);
-                });
-
-                // input 업데이트
-                const startHour = parseInt(time);
-                const endHour = startHour + 3;
-                const mm = String(day).padStart(2,'0');
-                dateInput.value = `2025-05-${mm} ${time} ~ ${String(endHour).padStart(2,'0')}:00`;
-              });
-            }
+            const booked = bookings.some(b=> b.datetime.startsWith(`2025-05-${String(day).padStart(2,'0')}`) && b.datetime.includes(time));
+            const btn = document.createElement('span'); btn.className='time-slot'+(booked?' disabled':''); btn.textContent=time;
+            if(!booked && time<='15:00') btn.addEventListener('click', selectSlots);
             wrapper.appendChild(btn);
           });
           cell.appendChild(wrapper);
         }
         calendarGrid.appendChild(cell);
       });
+    }
 
-      // 3) 폼 제출
-      document.getElementById('scheduleForm').addEventListener('submit', function(e){
-        e.preventDefault();
-        const fd = new FormData(this);
-        fetch('https://script.google.com/macros/s/AKfycbwCYXoZV6Tpv4E8SvHLlDMpvjlHTNDsNiX8AEq2nGJkkRk-QDgZvUCMLT6zKMuJzltX/exec', {
-          method: 'POST', body: fd
-        })
-        .then(res=>res.text())
-        .then(_=>{ alert('신청이 완료되었습니다!'); this.reset(); })
-        .catch(_=>alert('오류 발생'));
-      });
+    // 슬롯 선택 로직
+    function selectSlots(e){
+      const btn = e.currentTarget;
+      const wrapper = btn.parentElement;
+      const slots = Array.from(wrapper.children);
+      const idx = slots.indexOf(btn);
+      slots.forEach(s=>s.classList.remove('selected'));
+      const toSelect = slots.slice(idx, idx+3);
+      toSelect.forEach(s=>s.classList.add('selected'));
+      const [dayEl] = wrapper.parentElement.querySelectorAll('.date-num');
+      const day = String(dayEl.textContent).padStart(2,'0');
+      const start = btn.textContent;
+      const end = String(parseInt(start)+3).padStart(2,'0')+':00';
+      dateInput.value = `2025-05-${day} ${start} ~ ${end}`;
+    }
 
-      // 4) 예약 현황 주기적 갱신
-      setInterval(async ()=>{
-        try{
-          const res = await fetch('https://script.google.com/macros/s/AKfycbwCYXoZV6Tpv4E8SvHLlDMpvjlHTNDsNiX8AEq2nGJkkRk-QDgZvUCMLT6zKMuJzltX/exec');
-          bookings = await res.json();
-          // 캘린더 슬롯 상태 업데이트 로직 (생략: 리로드 필요)
-        }catch{};
-      }, 30000);
-    })();
+    // 폼 제출
+    document.getElementById('scheduleForm').addEventListener('submit', async function(e){
+      e.preventDefault();
+      const fd = new FormData(this);
+      await fetch(URL, {method:'POST', body:fd});
+      this.reset();
+      await render();
+      alert('신청이 완료되었습니다!');
+    });
+
+    // 초기 렌더 + 주기적 업데이트
+    await render();
+    setInterval(render, 30000);
+
+  })();
   </script>
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script>
 </body>
 </html>
