@@ -4,32 +4,15 @@
   <meta charset="UTF-8">
   <title>2025년 팀 단위 조직개발 W/S 스케줄러</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Spoqa+Han+Sans+Neo&display=swap" rel="stylesheet">
   <style>
-    @font-face {
-      font-family: 'OKFont';
-      src: url('OKFont-Bold.woff') format('woff');
-      font-weight: 700;
-    }
-    @font-face {
-      font-family: 'OKFont';
-      src: url('OKFont-Medium.woff') format('woff');
-      font-weight: 500;
-    }
-    @font-face {
-      font-family: 'OKFont';
-      src: url('OKFont-Light.woff') format('woff');
-      font-weight: 300;
-    }
-    @font-face {
-      font-family: 'OKFont';
-      src: url('오케이체 Medium.ttf') format('truetype');
-      font-weight: 500;
-    }
-    @font-face {
-      font-family: 'OKFont';
-      src: url('오케이체 Light.ttf') format('truetype');
-      font-weight: 300;
-    }
+    /* ─ 기존 스타일 ─ */
+    @font-face { font-family: 'OKFont'; src: url('OKFont-Bold.woff') format('woff'); font-weight: 700; }
+    @font-face { font-family: 'OKFont'; src: url('OKFont-Medium.woff') format('woff'); font-weight: 500; }
+    @font-face { font-family: 'OKFont'; src: url('OKFont-Light.woff') format('woff'); font-weight: 300; }
+    @font-face { font-family: 'OKFont'; src: url('오케이체 Medium.ttf') format('truetype'); font-weight: 500; }
+    @font-face { font-family: 'OKFont'; src: url('오케이체 Light.ttf') format('truetype'); font-weight: 300; }
+
     body {
       font-family: 'OKFont', sans-serif;
       background-color: #fff8f0;
@@ -42,10 +25,8 @@
       display: flex;
       align-items: center;
       gap: 12px;
-    }
-
-    h1 img {
-      height: 60px;
+      font-size: 36px;
+      font-weight: 700;
     }
 
     label {
@@ -79,13 +60,94 @@
     button:hover {
       background-color: rgb(85, 71, 0);
     }
+
+    /* ─ 캘린더 추가 스타일 ─ */
+    .calendar-container {
+      margin: 30px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      overflow: hidden;
+      font-family: 'OKFont', sans-serif;
+    }
+    .calendar-header {
+      background: rgb(85,71,0);
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 16px;
+    }
+    .month-title {
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .legend .dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin: 0 4px 0 12px;
+    }
+    .legend .available { background: #F55000; }
+    .legend .disabled  { background: #ccc; }
+
+    .calendar-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7,1fr);
+      background: #f0f0f0;
+      text-align: center;
+    }
+    .calendar-weekdays div {
+      padding: 6px 0;
+      font-weight: 500;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7,1fr);
+    }
+    .calendar-day {
+      border-top: 1px solid #ddd;
+      border-right: 1px solid #ddd;
+      min-height: 100px;
+      padding: 4px;
+      position: relative;
+      font-size: 12px;
+    }
+    .calendar-day.disabled {
+      background: #fafafa;
+      color: #ccc;
+    }
+    .calendar-day .date-num {
+      font-weight: bold;
+    }
+    .time-slots {
+      margin-top: 6px;
+    }
+    .time-slot {
+      display: inline-block;
+      margin: 2px;
+      padding: 4px 6px;
+      font-size: 11px;
+      border: 1px solid #aaa;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .time-slot.disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .time-slot.selected {
+      background: #F55000;
+      color: white;
+      border-color: #F55000;
+    }
   </style>
-<link href="https://fonts.googleapis.com/css2?family=Spoqa+Han+Sans+Neo&display=swap" rel="stylesheet">
 </head>
 <body>
 
-  <h1 style="font-size: 36px; font-weight: 700;">2025년 팀 단위 조직개발 W/S 스케줄러🕐</h1>
-  <p style="font-size: 12px; line-height: 1.6; font-weight: 300;">
+  <h1>2025년 팀 단위 조직개발 W/S 스케줄러🕐</h1>
+  <p style="font-size:12px;line-height:1.6;font-weight:300;">
     신임 리더 여러분, 안녕하세요?<br>
     성공적인 신임 리더로서의 체크인을 완료하신 것을 진심으로 축하드립니다🎉<br><br>
     다음 과정은 신임 리더 부임 이후 팀의 정서적 안정과 협업 기반 형성을 지원하기 위한<br>
@@ -97,9 +159,25 @@
     (2) 팀별 디프리핑 워크숍 진행(3시간)
   </p>
 
+  <!-- ─ 캘린더 컨테이너 ─ -->
+  <div class="calendar-container">
+    <div class="calendar-header">
+      <span class="month-title">2025년 5월</span>
+      <div class="legend">
+        <span class="dot available"></span><span>선택 가능</span>
+        <span class="dot disabled"></span><span>주말/불가</span>
+      </div>
+    </div>
+    <div class="calendar-weekdays">
+      <div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div>
+    </div>
+    <div id="calendarGrid" class="calendar-grid"></div>
+  </div>
+
   <form id="scheduleForm">
+    <!-- 기존 폼 섹션들 (팀 선택, Flatpickr input, 이름, 요청사항) -->
     <div class="form-section">
-      <label for="team" style="font-size: 18px; font-weight: 500;">팀 선택</label>
+      <label for="team" style="font-size:18px;font-weight:500;">팀 선택</label>
       <select id="team" name="team" required>
         <option value="">-- 팀을 선택해주세요 --</option>
         <option>검사팀</option>
@@ -117,27 +195,24 @@
     </div>
 
     <div class="form-section">
-      <label for="datetime" style="font-size: 18px; font-weight: 500;">팀 워크숍 일정 선택</label>
-<p style="font-size: 12px; line-height: 1.5; margin-bottom: 10px; font-weight: 300;">
-  5/19(월)~5/30(금) 09:00~18:00 사이 3시간 동안 진행 예정(점심시간 1시간 포함 진행 가능)<br>
-  팀 전체 워크숍 진행이 어려운 경우 추가 전달 사항에 따로 말씀 부탁드립니다.<br>
-  (이 경우 2개 시간대로 나누어서 진행 예정)
-</p>
-<input type="text" id="datetime" name="datetime" required readonly placeholder="날짜와 시작시간을 선택하세요">
-  
+      <label for="datetime" style="font-size:18px;font-weight:500;">팀 워크숍 일정 선택</label>
+      <p style="font-size:12px;line-height:1.5;margin-bottom:10px;font-weight:300;">
+        5/19(월)~5/30(금) 09:00~18:00 사이 3시간 동안 진행 예정(점심시간 1시간 포함 가능)<br>
+        팀 전체 워크숍 진행이 어려운 경우 추가 전달 사항에 따로 말씀 부탁드립니다.
+      </p>
+      <input type="text" id="datetime" name="datetime" required readonly placeholder="날짜와 시작시간을 선택하세요">
     </div>
 
     <div class="form-section">
-      <label for="name" style="font-size: 18px; font-weight: 500;">참여 팀원</label>
-  <p style="font-size: 12px; line-height: 1.5; font-weight: 300;">
-    본 팀 단위 조직개발 프로그램에 참여할 팀원을 적어주십시오.<br>
-    예시 : 김읏맨 차장, 이읏맨 대리, 박읏맨 사원
-  </p>
-      <input type="text" id="name" name="name" placeholder="팀원의 이름과 직급을 순차적으로 입력하세요" required>
+      <label for="name" style="font-size:18px;font-weight:500;">참여 팀원</label>
+      <p style="font-size:12px;line-height:1.5;font-weight:300;">
+        예시: 김읏맨 차장, 이읏맨 대리, 박읏맨 사원
+      </p>
+      <input type="text" id="name" name="name" placeholder="팀원의 이름과 직급을 입력하세요" required>
     </div>
 
     <div class="form-section">
-      <label for="note" style="font-size: 18px; font-weight: 500;">추가 전달 사항</label>
+      <label for="note" style="font-size:18px;font-weight:500;">추가 전달 사항</label>
       <textarea id="note" name="note" rows="3" placeholder="특이사항 또는 요청사항을 입력하세요"></textarea>
     </div>
 
@@ -145,6 +220,60 @@
   </form>
 
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+  <!-- ─ 캘린더 그리드 & 타임슬롯 로직 ─ -->
+  <script>
+  (function(){
+    const calendarGrid = document.getElementById('calendarGrid');
+    const dateInput    = document.getElementById('datetime');
+    let selectedEl     = null;
+
+    // 5/19~5/30 평일만
+    const days = [];
+    for (let d=19; d<=30; d++){
+      const date = new Date(2025,4,d);
+      const dow  = date.getDay();
+      days.push({ day: d, disabled: (dow===0||dow===6) });
+    }
+
+    const timeSlots = ["09:00","10:00","11:00","12:00","13:00","14:00","15:00"];
+
+    days.forEach(({day, disabled})=>{
+      const cell = document.createElement('div');
+      cell.className = 'calendar-day' + (disabled?' disabled':'');
+      const num = document.createElement('div');
+      num.className = 'date-num';
+      num.textContent = day;
+      cell.appendChild(num);
+
+      if (!disabled) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'time-slots';
+        timeSlots.forEach(time=>{
+          const hour = parseInt(time);
+          const isDisabled = hour>15;
+          const btn = document.createElement('span');
+          btn.className = 'time-slot' + (isDisabled?' disabled':'');
+          btn.textContent = time;
+          if (!isDisabled) {
+            btn.addEventListener('click', ()=>{
+              if (selectedEl) selectedEl.classList.remove('selected');
+              btn.classList.add('selected');
+              selectedEl = btn;
+              const mm = String(day).padStart(2,'0');
+              dateInput.value = `2025-05-${mm} ${time}`;
+            });
+          }
+          wrapper.appendChild(btn);
+        });
+        cell.appendChild(wrapper);
+      }
+
+      calendarGrid.appendChild(cell);
+    });
+  })();
+  </script>
+
   <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script>
   <script>
     flatpickr("#datetime", {
@@ -157,7 +286,6 @@
       minuteIncrement: 60,
       disable: [
         function(date) {
-          // Disable weekends
           return (date.getDay() === 0 || date.getDay() === 6);
         }
       ],
@@ -172,10 +300,10 @@
       const [date, hour] = rawDate.split(' ');
       const startHour = parseInt(hour);
       const endHour = startHour + 3;
-      const weekDays = ['일', '월', '화', '수', '목', '금', '토'];
-      const dateObj = new Date(`${date}T${String(startHour).padStart(2, '0')}:00:00`);
+      const weekDays = ['일','월','화','수','목','금','토'];
+      const dateObj = new Date(`${date}T${String(startHour).padStart(2,'0')}:00:00`);
       const dayName = weekDays[dateObj.getDay()];
-      const timeRange = `${date}(${dayName}) ${String(startHour).padStart(2, '0')}:00 ~ ${String(endHour).padStart(2, '0')}:00`;
+      const timeRange = `${date}(${dayName}) ${String(startHour).padStart(2,'0')}:00 ~ ${String(endHour).padStart(2,'0')}:00`;
 
       const formData = new FormData(form);
       formData.set('datetime', timeRange);
@@ -186,8 +314,7 @@
       })
       .then(response => response.text())
       .then(result => {
-        alert(`신청이 완료되었습니다!
-선택하신 시간: ${timeRange}`);
+        alert(`신청이 완료되었습니다!\n선택하신 시간: ${timeRange}`);
         form.reset();
       })
       .catch(error => {
@@ -197,14 +324,14 @@
     });
   </script>
 
-  <hr style="margin-top: 40px; margin-bottom: 10px;">
-<div style="font-size: 13px; font-weight: 300; line-height: 1.8; color: #555;">
-  교육 관련 문의사항은 언제든지 연락 부탁드립니다.<br><br>
-  <strong>담당자 연락처</strong><br>
-  인재개발팀 박선우 사원<br>
-  T. <a href="tel:0237049732" style="color: #555; text-decoration: none;">02-3704-9732</a><br>
-  E. <a href="mailto:okhrd@okfngroup.com" style="color: #555; text-decoration: none;">okhrd@okfngroup.com</a>
-</div>
+  <hr style="margin:40px 0 10px;">
+  <div style="font-size:13px;font-weight:300;line-height:1.8;color:#555;">
+    교육 관련 문의사항은 언제든지 연락 부탁드립니다.<br><br>
+    <strong>담당자 연락처</strong><br>
+    인재개발팀 박선우 사원<br>
+    T. <a href="tel:0237049732" style="color:#555;text-decoration:none;">02-3704-9732</a><br>
+    E. <a href="mailto:okhrd@okfngroup.com" style="color:#555;text-decoration:none;">okhrd@okfngroup.com</a>
+  </div>
 
 </body>
 </html>
