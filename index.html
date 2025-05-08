@@ -63,11 +63,10 @@
 
     /* ─ 캘린더 추가 스타일 ─ */
     .calendar-container {
-      margin: 30px 0;
+      margin: 20px 0;
       border: 1px solid #ccc;
       border-radius: 8px;
       overflow: hidden;
-      font-family: 'OKFont', sans-serif;
     }
     .calendar-header {
       background: rgb(85,71,0);
@@ -111,7 +110,6 @@
       border-right: 1px solid #ddd;
       min-height: 100px;
       padding: 4px;
-      position: relative;
       font-size: 12px;
     }
     .calendar-day.disabled {
@@ -159,23 +157,7 @@
     (2) 팀별 디프리핑 워크숍 진행(3시간)
   </p>
 
-  <!-- ─ 캘린더 컨테이너 ─ -->
-  <div class="calendar-container">
-    <div class="calendar-header">
-      <span class="month-title">2025년 5월</span>
-      <div class="legend">
-        <span class="dot available"></span><span>선택 가능</span>
-        <span class="dot disabled"></span><span>주말/불가</span>
-      </div>
-    </div>
-    <div class="calendar-weekdays">
-      <div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div>
-    </div>
-    <div id="calendarGrid" class="calendar-grid"></div>
-  </div>
-
   <form id="scheduleForm">
-    <!-- 기존 폼 섹션들 (팀 선택, Flatpickr input, 이름, 요청사항) -->
     <div class="form-section">
       <label for="team" style="font-size:18px;font-weight:500;">팀 선택</label>
       <select id="team" name="team" required>
@@ -200,6 +182,22 @@
         5/19(월)~5/30(금) 09:00~18:00 사이 3시간 동안 진행 예정(점심시간 1시간 포함 가능)<br>
         팀 전체 워크숍 진행이 어려운 경우 추가 전달 사항에 따로 말씀 부탁드립니다.
       </p>
+
+      <!-- 캘린더 컨테이너 (이곳으로 이동) -->
+      <div class="calendar-container">
+        <div class="calendar-header">
+          <span class="month-title">2025년 5월</span>
+          <div class="legend">
+            <span class="dot available"></span><span>선택 가능</span>
+            <span class="dot disabled"></span><span>주말/불가</span>
+          </div>
+        </div>
+        <div class="calendar-weekdays">
+          <div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div>
+        </div>
+        <div id="calendarGrid" class="calendar-grid"></div>
+      </div>
+
       <input type="text" id="datetime" name="datetime" required readonly placeholder="날짜와 시작시간을 선택하세요">
     </div>
 
@@ -221,26 +219,27 @@
 
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-  <!-- ─ 캘린더 그리드 & 타임슬롯 로직 ─ -->
+  <!-- 캘린더 그리드 & 3시간 연속 선택 로직 -->
   <script>
   (function(){
     const calendarGrid = document.getElementById('calendarGrid');
     const dateInput    = document.getElementById('datetime');
-    let selectedEl     = null;
+    let selectedEls    = [];
 
-    // 5/19~5/30 평일만
+    // 5/19~5/30 평일만 준비
     const days = [];
-    for (let d=19; d<=30; d++){
-      const date = new Date(2025,4,d);
-      const dow  = date.getDay();
-      days.push({ day: d, disabled: (dow===0||dow===6) });
+    for (let d = 19; d <= 30; d++) {
+      const date = new Date(2025, 4, d);
+      const dow  = date.getDay(); // 0=일, 6=토
+      days.push({ day: d, disabled: (dow === 0 || dow === 6) });
     }
 
     const timeSlots = ["09:00","10:00","11:00","12:00","13:00","14:00","15:00"];
 
-    days.forEach(({day, disabled})=>{
+    days.forEach(({ day, disabled }) => {
       const cell = document.createElement('div');
-      cell.className = 'calendar-day' + (disabled?' disabled':'');
+      cell.className = 'calendar-day' + (disabled ? ' disabled' : '');
+
       const num = document.createElement('div');
       num.className = 'date-num';
       num.textContent = day;
@@ -249,21 +248,37 @@
       if (!disabled) {
         const wrapper = document.createElement('div');
         wrapper.className = 'time-slots';
-        timeSlots.forEach(time=>{
+
+        timeSlots.forEach(time => {
           const hour = parseInt(time);
-          const isDisabled = hour>15;
+          const isDisabled = hour > 15;
           const btn = document.createElement('span');
-          btn.className = 'time-slot' + (isDisabled?' disabled':'');
+          btn.className = 'time-slot' + (isDisabled ? ' disabled' : '');
           btn.textContent = time;
+
           if (!isDisabled) {
-            btn.addEventListener('click', ()=>{
-              if (selectedEl) selectedEl.classList.remove('selected');
-              btn.classList.add('selected');
-              selectedEl = btn;
-              const mm = String(day).padStart(2,'0');
+            btn.addEventListener('click', () => {
+              // 이전 선택 해제
+              selectedEls.forEach(el => el.classList.remove('selected'));
+              selectedEls = [];
+
+              // 클릭 시 해당 시각부터 3시간 연속 선택
+              const slots = Array.from(wrapper.querySelectorAll('.time-slot'));
+              const startIdx = slots.indexOf(btn);
+              const toSelect = slots.slice(startIdx, startIdx + 3);
+              toSelect.forEach(slot => {
+                if (!slot.classList.contains('disabled')) {
+                  slot.classList.add('selected');
+                  selectedEls.push(slot);
+                }
+              });
+
+              // input에 시작 시간만 반영
+              const mm = String(day).padStart(2, '0');
               dateInput.value = `2025-05-${mm} ${time}`;
             });
           }
+
           wrapper.appendChild(btn);
         });
         cell.appendChild(wrapper);
@@ -284,11 +299,7 @@
       minDate: "2025-05-19",
       maxDate: "2025-05-30",
       minuteIncrement: 60,
-      disable: [
-        function(date) {
-          return (date.getDay() === 0 || date.getDay() === 6);
-        }
-      ],
+      disable: [date => date.getDay() === 0 || date.getDay() === 6],
       minTime: "09:00",
       maxTime: "18:00"
     });
