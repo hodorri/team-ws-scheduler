@@ -38,7 +38,7 @@
     .time-slot.disabled { opacity:0.4; cursor:not-allowed; }
     .time-slot.selected { background:#F55000; color:#fff; border-color:#F55000; }
 
-    /* 예약 현황 스타일 */
+    /* 신청 현황 스타일 */
     #bookingList { margin:20px 0; }
     .booking-card { background:#fff; border:1px solid #ddd; border-radius:6px; padding:12px; margin-bottom:8px; }
     .booking-header { font-weight:bold; color:#554700; margin-bottom:6px; }
@@ -56,7 +56,7 @@
     성공적인 신임 리더로서의 체크인을 완료하신 것을 진심으로 축하드립니다🎉<br><br>
     다음 과정은 신임 리더 부임 이후 팀의 정서적 안정과 협업 기반 형성을 지원하기 위한 팀 단위 조직개발 프로그램으로 구성원들과 함께 팀의 현재를 진단하고 일하는 방식과 관계를 재정렬하는 시간을 가질 예정입니다.<br><br>
     5/19(월)~5/30(금) 중 참여 가능한 일정을 선택해 주세요!<br>
-    워크숍은 팀별 맞춤형 3시간 과정이며, 이미 예약된 블록은 회색으로 표시됩니다.
+    워크숍은 팀별 맞춤형 3시간 과정이며, 이미 신청된 블록은 회색으로 표시됩니다.
   </p>
 
   <form id="scheduleForm">
@@ -103,7 +103,7 @@
   </form>
 
   <div id="bookingList">
-    <h3 class="booking-header">예약 현황</h3>
+    <h3 class="booking-header">신청 현황</h3>
     <div id="bookingCards"></div>
   </div>
 
@@ -135,7 +135,7 @@
 
     async function render() {
       const bookings = await loadData();
-      // 예약 현황 카드
+      // 신청 현황 카드
       cardsContainer.innerHTML = '';
       if (bookings.length) {
         bookings.sort((a,b)=>a.datetime.localeCompare(b.datetime));
@@ -145,7 +145,7 @@
           cardsContainer.appendChild(card);
         });
       } else {
-        cardsContainer.innerHTML = '<p>아직 예약된 일정이 없습니다.</p>';
+        cardsContainer.innerHTML = '<p>아직 신청된 일정이 없습니다.</p>';
       }
 
       // 캘린더 그리기
@@ -160,7 +160,7 @@
         const wrap = document.createElement('div'); wrap.className='time-slots';
         timeSlots.forEach(t => {
           const btn = document.createElement('span'); btn.className='time-slot'; btn.textContent=t;
-          // 이미 예약된 블록 비활성화
+          // 이미 신청된 블록 비활성화
           const blk = bookings.some(b => {
             const [ds, , rng] = b.datetime.split(' ');
             if (!ds.endsWith(String(d).padStart(2,'0'))) return false;
