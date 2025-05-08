@@ -188,7 +188,7 @@
       .then(result => {
         alert(`신청이 완료되었습니다!
 선택하신 시간: ${timeRange}`);
-window.location.href = 'calendar.html';
+        form.reset();
       })
       .catch(error => {
         console.error('오류 발생:', error);
