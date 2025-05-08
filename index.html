@@ -6,7 +6,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Spoqa+Han+Sans+Neo&display=swap" rel="stylesheet">
   <style>
-    /* ─ 기존 스타일 ─ */
+    /* ─ 폰트 정의 ─ */
     @font-face { font-family: 'OKFont'; src: url('OKFont-Bold.woff') format('woff'); font-weight: 700; }
     @font-face { font-family: 'OKFont'; src: url('OKFont-Medium.woff') format('woff'); font-weight: 500; }
     @font-face { font-family: 'OKFont'; src: url('OKFont-Light.woff') format('woff'); font-weight: 300; }
@@ -15,13 +15,42 @@
 
     body { font-family: 'OKFont', sans-serif; background-color: #fff8f0; color: #333; padding: 30px; }
     h1 { color: rgb(245, 80, 0); font-size: 36px; font-weight: 700; margin-bottom: 8px; }
-    label { display: block; margin: 15px 0 5px; font-weight: bold; }
-    select, input, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; font-size: 14px; }
+    label { display: block; margin: 15px 0 5px; font-weight: 500; font-size: 18px; }
+
+    /* ─ 입력창/셀렉트/텍스트에어리어 기본 스타일 ─ */
+    select, input, textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-family: 'OKFont', sans-serif;
+      font-size: 12px;
+      font-weight: 300;
+    }
+    option {
+      font-family: 'OKFont', sans-serif;
+      font-size: 12px;
+      font-weight: 300;
+    }
+    input::placeholder, textarea::placeholder {
+      font-family: 'OKFont', sans-serif;
+      font-size: 12px;
+      font-weight: 300;
+      color: #aaa;
+    }
     .form-section { margin-bottom: 20px; }
-    button { background-color: rgb(255, 170, 0); border: none; color: white; padding: 12px 20px; font-size: 16px; border-radius: 10px; cursor: pointer; }
+    button {
+      background-color: rgb(255, 170, 0);
+      border: none;
+      color: white;
+      padding: 12px 20px;
+      font-size: 16px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
     button:hover { background-color: rgb(85, 71, 0); }
 
-    /* ─ 캘린더 추가 스타일 ─ */
+    /* ─ 캘린더 스타일 ─ */
     .calendar-container { margin: 20px 0; border: 1px solid #ccc; border-radius: 8px; overflow: hidden; }
     .calendar-header { background: rgb(85,71,0); color: white; display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; }
     .month-title { font-size: 18px; font-weight: bold; }
@@ -38,6 +67,10 @@
     .time-slot { display: inline-block; margin: 2px; padding: 4px 6px; font-size: 11px; border: 1px solid #aaa; border-radius: 4px; cursor: pointer; }
     .time-slot.disabled { opacity: 0.4; cursor: not-allowed; }
     .time-slot.selected { background: #F55000; color: white; border-color: #F55000; }
+
+    /* ─ 문의 연락처 스타일 ─ */
+    .contact-info { margin-top: 40px; font-size: 13px; color: #555; line-height: 1.8; }
+    .contact-info a { color: #555; text-decoration: none; }
   </style>
 </head>
 <body>
@@ -46,14 +79,14 @@
     신임 리더 여러분, 안녕하세요?<br>
     성공적인 신임 리더로서의 체크인을 완료하신 것을 진심으로 축하드립니다🎉<br><br>
     다음 과정은 신임 리더 부임 이후 팀의 정서적 안정과 협업 기반 형성을 지원하기 위한<br>
-    팀 단위 조직개발 프로그램으로 구성원들과 함께 팀의 현재를 진단하고 일하는 방식과 관계를 재정렬하는 시간을 가질 예정입니다.<br><br>
+    팀 단위 조직개발 프로그램으로 구성원들과 함께 팀의 현재를 진단하고 일하는 방식과 관계를 재정열하는 시간을 가질 예정입니다.<br><br>
     5/19(월)~5/30(금) 중 참여 가능한 일정을 선택해 주세요!<br>
     해당 과정은 팀별 맞춤형 과정(3시간)으로서 최대한 선택해주신 일정에 맞추어 근무지 인근에서 교육 진행 예정입니다.
   </p>
 
   <form id="scheduleForm">
     <div class="form-section">
-      <label for="team" style="font-size:18px;font-weight:500;">팀 선택</label>
+      <label for="team">팀 선택</label>
       <select id="team" name="team" required>
         <option value="">-- 팀을 선택해주세요 --</option>
         <option>검사팀</option>
@@ -71,12 +104,11 @@
     </div>
 
     <div class="form-section">
-      <label for="datetime" style="font-size:18px;font-weight:500;">팀 워크숍 일정 선택</label>
+      <label for="datetime">팀 워크숍 일정 선택</label>
       <p style="font-size:12px;line-height:1.5;margin-bottom:10px;font-weight:300;">
         5/19(월)~5/30(금) 09:00~18:00 사이 3시간 동안 진행 예정(점심시간 1시간 포함 가능)<br>
         팀 전체 워크숍 진행이 어려운 경우 추가 전달 사항에 따로 말씀 부탁드립니다.
       </p>
-      <!-- 캘린더 -->
       <div class="calendar-container">
         <div class="calendar-header">
           <span class="month-title">2025년 5월</span>
@@ -95,18 +127,29 @@
     </div>
 
     <div class="form-section">
-      <label for="name" style="font-size:18px;font-weight:500;">참여 팀원</label>
+      <label for="name">참여 팀원</label>
       <p style="font-size:12px;line-height:1.5;font-weight:300;">예시: 김읏맨 차장, 이읏맨 대리, 박읏맨 사원</p>
       <input type="text" id="name" name="name" placeholder="팀원의 이름과 직급을 입력하세요" required>
     </div>
 
     <div class="form-section">
-      <label for="note" style="font-size:18px;font-weight:500;">추가 전달 사항</label>
+      <label for="note">추가 전달 사항</label>
       <textarea id="note" name="note" rows="3" placeholder="특이사항 또는 요청사항을 입력하세요"></textarea>
     </div>
 
     <button type="submit">신청하기</button>
   </form>
+
+  <hr style="margin:40px 0; border:none; border-top:1px solid #ddd;">
+  <!-- 문의 연락처 -->
+  <div class="contact-info">
+    <p>추가 문의사항은 담당자에게 연락 부탁드립니다.</p>
+    <p>
+      인재개발팀 박선우 사원<br>
+      T. <a href="tel:02-3704-9732">02-3704-9732</a><br>
+      E. <a href="mailto:okhrd@okfngroup.com">okhrd@okfngroup.com</a>
+    </p>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script>
@@ -114,9 +157,9 @@
       const calendarGrid = document.getElementById('calendarGrid');
       const dateInput    = document.getElementById('datetime');
       let selectedEls    = [];
-      const days = [];
+      const days         = [];
       for(let d=19; d<=30; d++){ const date=new Date(2025,4,d); const dow=date.getDay(); days.push({day:d,disabled:(dow===0||dow===6)}); }
-      const timeSlots=["09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00"];
+      const timeSlots    = ["09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00"];
       days.forEach(({day,disabled})=>{
         const cell=document.createElement('div'); cell.className='calendar-day'+(disabled?' disabled':'');
         const num=document.createElement('div'); num.className='date-num'; num.textContent=day; cell.appendChild(num);
@@ -126,35 +169,3 @@
             const hour=parseInt(time); const isEndOnly=hour>15; const btn=document.createElement('span');
             btn.className='time-slot'+(isEndOnly?' disabled':''); btn.textContent=time;
             if(!isEndOnly){ btn.addEventListener('click',()=>{
-                selectedEls.forEach(el=>el.classList.remove('selected')); selectedEls=[];
-                const slots=Array.from(wrapper.querySelectorAll('.time-slot'));
-                const startIdx=slots.indexOf(btn); const toSelect=slots.slice(startIdx,startIdx+3);
-                toSelect.forEach(slot=>{ if(!slot.classList.contains('disabled')){ slot.classList.add('selected'); selectedEls.push(slot);} });
-                const start=parseInt(time); const end=start+3; const mm=String(day).padStart(2,'0');
-                dateInput.value=`2025-05-${mm} ${time} ~ ${String(end).padStart(2,'0')}:00`;
-            }); }
-            wrapper.appendChild(btn);
-          }); cell.appendChild(wrapper);
-        }
-        calendarGrid.appendChild(cell);
-      });
-    })();
-  </script>
-
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script>
-  <script>
-    flatpickr("#datetime",{locale:'ko',enableTime:true,time_24hr:true,dateFormat:"Y-m-d H:i",minDate:"2025-05-19",maxDate:"2025-05-30",minuteIncrement:60,disable:[d=>d.getDay()===0||d.getDay()===6],minTime:"09:00",maxTime:"18:00"});
-    document.getElementById('scheduleForm').addEventListener('submit',function(e){
-      e.preventDefault();
-      const form=this;
-      const raw=dateInput.value;
-      const formData=new FormData(form);
-      formData.set('datetime',raw);
-      fetch('https://script.google.com/macros/s/AKfycbxQU7azoea3jf7ylpv31Dz3cdvxdidObovxGbp4zIxcuwHVqgDSfE81k2ykHxLfkVIZ/exec',{method:'POST',body:formData})
-        .then(res=>res.text())
-        .then(_=>{alert(`신청이 완료되었습니다!\n선택: ${raw}`);form.reset();})
-        .catch(_=>alert('오류 발생'));
-    });
-  </script>
-</body>
-</html>
