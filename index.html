@@ -163,7 +163,9 @@
           const btn = document.createElement('span'); btn.className = 'time-slot'; btn.textContent = t;
           if (t <= '15:00') {
             btn.addEventListener('click', () => {
-              wrap.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+              // 전체 선택 해제
+              document.querySelectorAll('.time-slot.selected').forEach(s => s.classList.remove('selected'));
+              // 이 라인에서 선택
               const slots = Array.from(wrap.children);
               const idx = slots.indexOf(btn);
               slots.slice(idx, idx+3).forEach(s => s.classList.add('selected'));
