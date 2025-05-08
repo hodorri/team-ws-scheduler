@@ -103,7 +103,6 @@
     <div class="form-section">
       <label for="datetime">팀 워크숍 일정 선택</label>
       <div class="calendar-container">
-        <!-- 캘린더 렌더링 영역 -->
         <div class="calendar-header">
           <span class="month-title">2025년 5월</span>
           <div class="legend">
@@ -150,39 +149,77 @@
 
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script>
+    // 캘린더 렌더링 & 폼 submit
+    (function(){
+      const calendarGrid = document.getElementById('calendarGrid');
+      const dateInput    = document.getElementById('datetime');
+      let selectedEls    = [];
+      const days = [];
+      for(let d=19; d<=30; d++){ const date=new Date(2025,4,d); const dow=date.getDay(); days.push({day:d,disabled:(dow===0||dow===6)}); }
+      const timeSlots = ["09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00"];
+      days.forEach(({day,disabled})=>{
+        const cell = document.createElement('div'); cell.className = 'calendar-day' + (disabled?' disabled':'');
+        const num  = document.createElement('div'); num.className='date-num'; num.textContent=day; cell.appendChild(num);
+        if(!disabled){
+          const wrapper = document.createElement('div'); wrapper.className='time-slots';
+          timeSlots.forEach(time=>{
+            const hour      = parseInt(time);
+            const isEndOnly = hour > 15;
+            const btn       = document.createElement('span');
+            btn.className  = 'time-slot' + (isEndOnly?' disabled':''); btn.textContent = time;
+            if(!isEndOnly){ btn.addEventListener('click', ()=>{
+                selectedEls.forEach(el=>el.classList.remove('selected')); selectedEls=[];
+                const slots     = Array.from(wrapper.querySelectorAll('.time-slot'));
+                const startIdx  = slots.indexOf(btn);
+                const toSelect  = slots.slice(startIdx, startIdx+3);
+                toSelect.forEach(slot=>{ if(!slot.classList.contains('disabled')){ slot.classList.add('selected'); selectedEls.push(slot); }});
+                const startHour = parseInt(time);
+                const endHour   = startHour + 3;
+                const mm        = String(day).padStart(2,'0');
+                dateInput.value = `2025-05-${mm} ${time} ~ ${String(endHour).padStart(2,'0')}:00`;
+            }); }
+            wrapper.appendChild(btn);
+          });
+          cell.appendChild(wrapper);
+        }
+        calendarGrid.appendChild(cell);
+      });
+
+      // 폼 submit -> Google Sheets POST
+      document.getElementById('scheduleForm').addEventListener('submit', function(e){
+        e.preventDefault();
+        const form     = this;
+        const formData = new FormData(form);
+        fetch('https://script.google.com/macros/s/AKfycbxQU7azoea3jf7ylpv31Dz3cdvxdidObovxGbp4zIxcuwHVqgDSfE81k2ykHxLfkVIZ/exec', {
+          method: 'POST', body: formData
+        })
+        .then(res=>res.text())
+        .then(_=>{ alert('신청이 완료되었습니다!'); form.reset(); })
+        .catch(_=>alert('오류 발생'));
+      });
+    })();
+
     // Google Sheets GET으로 예약 현황 불러오기
     (function(){
       const cards = document.getElementById('bookingCards');
-      async function load() {
+      async function load(){
         cards.innerHTML = '<p>로딩 중...</p>';
-        try {
-          const res = await fetch('https://script.google.com/macros/s/AKfycbxQU7azoea3jf7ylpv31Dz3cdvxdidObovxGbp4zIxcuwHVqgDSfE81k2ykHxLfkVIZ/exec');
+        try{
+          const res  = await fetch('https://script.google.com/macros/s/AKfycbxQU7azoea3jf7ylpv31Dz3cdvxdidObovxGbp4zIxcuwHVqgDSfE81k2ykHxLfkVIZ/exec');
           const data = await res.json();
           cards.innerHTML = '';
-          if (!data.length) {
-            cards.innerHTML = '<p>아직 예약된 일정이 없습니다.</p>';
-            return;
-          }
+          if(!data.length){ cards.innerHTML = '<p>아직 예약된 일정이 없습니다.</p>'; return; }
           data.sort((a,b) => a.date.localeCompare(b.date) || a.startTime.localeCompare(b.startTime));
-          data.forEach(b => {
+          data.forEach(b=>{
             const div = document.createElement('div'); div.className='booking-card';
-            div.innerHTML = `
-              <div class="booking-header">${b.team}</div>
-              <div class="booking-info">
-                <span>${b.date} ${b.startTime}~${b.endTime}</span>
-                <span>${b.teamMembers||''}</span>
-              </div>`;
+            div.innerHTML = `<div class="booking-header">${b.team}</div><div class="booking-info"><span>${b.date} ${b.startTime}~${b.endTime}</span><span>${b.teamMembers||''}</span></div>`;
             cards.appendChild(div);
           });
-        } catch (e) {
-          cards.innerHTML = '<p>예약 현황 불러오기 실패</p>';
-        }
+        }catch(e){ cards.innerHTML='<p>예약 현황 불러오기 실패</p>'; }
       }
-      load();
-      setInterval(load, 30000);
+      load(); setInterval(load,30000);
     })();
-
-    // 캘린더 & 폼 submit (생략)
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script>
 </body>
 </html>
