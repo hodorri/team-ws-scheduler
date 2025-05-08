@@ -52,7 +52,8 @@
     .time-slot { display: inline-block; margin: 2px; padding: 4px 6px;
       font-size: 11px; border: 1px solid #aaa; border-radius: 4px; cursor: pointer; }
     .time-slot.disabled { opacity: 0.4; cursor: not-allowed; }
-    .time-slot.selected { background: #F55000; color: white; border-color: #F55000; }
+    .time-slot.selected { background: #F55000; color: white; border-color: #F55000; opacity: 1; }
+    .time-slot.disabled.selected { opacity: 1; cursor: default; }
 
     /* 예약 현황 스타일 */
     #bookingList { margin: 20px 0; }
