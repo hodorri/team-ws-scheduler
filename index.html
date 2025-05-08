@@ -23,11 +23,8 @@
 
     /* 캘린더 스타일 */
     .calendar-container { margin:20px 0; border:1px solid #ccc; border-radius:8px; overflow:hidden; }
-    .calendar-header { background:#554700; color:#fff; padding:10px; display:flex; justify-content:space-between; align-items:center; }
+    .calendar-header { background:#554700; color:#fff; padding:10px; display:flex; justify-content:center; align-items:center; }
     .month-title { font-size:18px; font-weight:bold; }
-    .legend .dot { display:inline-block; width:10px; height:10px; border-radius:50%; margin:0 4px; }
-    .legend .available { background:#F55000; }
-    .legend .disabled  { background:#ccc; }
     .calendar-weekdays { display:grid; grid-template-columns:repeat(5,1fr); background:#f0f0f0; text-align:center; }
     .calendar-weekdays div { padding:6px 0; font-weight:500; }
     .calendar-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:2px; }
@@ -56,7 +53,9 @@
     성공적인 신임 리더로서의 체크인을 완료하신 것을 진심으로 축하드립니다🎉<br><br>
     다음 과정은 신임 리더 부임 이후 팀의 정서적 안정과 협업 기반 형성을 지원하기 위한 팀 단위 조직개발 프로그램으로 구성원들과 함께 팀의 현재를 진단하고 일하는 방식과 관계를 재정렬하는 시간을 가질 예정입니다.<br><br>
     5/19(월)~5/30(금) 중 참여 가능한 일정을 선택해 주세요!<br>
-    워크숍은 팀별 맞춤형 3시간 과정이며, 이미 신청된 블록은 회색으로 표시됩니다.
+    워크숍은 팀별 맞춤형 3시간 과정이며, 하단의 예약 현황을 참고하여 신청 부탁드립니다.<br>
+    예약 일정이 중복될 경우 사전 조율을 진행하오나, <br>
+    조율이 어려울 경우 선착순을 기준으로 일정이 확정될 수 있는 점 미리 양해 부탁드립니다.
   </p>
 
   <form id="scheduleForm">
@@ -82,7 +81,6 @@
       <div class="calendar-container">
         <div class="calendar-header">
           <span class="month-title">2025년 5월</span>
-          <div class="legend"><span class="dot available"></span>선택 가능<span class="dot disabled"></span>불가</div>
         </div>
         <div class="calendar-weekdays">
           <div>월</div><div>화</div><div>수</div><div>목</div><div>금</div>
@@ -168,19 +166,16 @@
             const sh = parseInt(st), eh = parseInt(et), th = parseInt(t);
             return th >= sh && th < eh;
           });
-          if (blk) {
-            btn.classList.add('disabled');
-          } else if (t <= '15:00') {
-            btn.addEventListener('click', () => {
-              wrap.querySelectorAll('.time-slot').forEach(s=>s.classList.remove('selected'));
-              const slots = Array.from(wrap.children);
-              const idx = slots.indexOf(btn);
-              slots.slice(idx, idx+3).forEach(s=>s.classList.add('selected'));
-              const start = btn.textContent;
-              const end = String(parseInt(start)+3).padStart(2,'0')+':00';
-              dateInput.value = `2025-05-${String(d).padStart(2,'0')} ${start} ~ ${end}`;
-            });
-          }
+          if (blk) btn.classList.add('disabled');
+          else if (t <= '15:00') btn.addEventListener('click', () => {
+            wrap.querySelectorAll('.time-slot').forEach(s=>s.classList.remove('selected'));
+            const slots = Array.from(wrap.children);
+            const idx = slots.indexOf(btn);
+            slots.slice(idx, idx+3).forEach(s=>s.classList.add('selected'));
+            const start = btn.textContent;
+            const end = String(parseInt(start)+3).padStart(2,'0')+':00';
+            dateInput.value = `2025-05-${String(d).padStart(2,'0')} ${start} ~ ${end}`;
+          });
           wrap.appendChild(btn);
         });
         cell.appendChild(wrap);
