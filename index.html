@@ -23,7 +23,7 @@
 
     /* 캘린더 스타일 */
     .calendar-container { margin: 20px 0; border: 1px solid #ccc; border-radius: 8px; overflow: hidden; }
-    .calendar-header { background: #554700; color: #fff; padding: 10px; display: flex; justify-content: center; align-items: center; }
+    .calendar-header { background: #554700; color: #fff; padding: 10px; text-align: center; }
     .month-title { font-size: 18px; font-weight: bold; }
     .calendar-weekdays { display: grid; grid-template-columns: repeat(5,1fr); background: #f0f0f0; text-align: center; }
     .calendar-weekdays div { padding: 6px 0; font-weight: 500; }
@@ -52,7 +52,7 @@
     신임 리더 여러분, 안녕하세요?<br>
     성공적인 신임 리더로서의 체크인을 완료하신 것을 진심으로 축하드립니다🎉<br><br>
     다음 과정은 신임 리더 부임 이후 팀의 정서적 안정과 협업 기반 형성을 지원하기 위한 팀 단위 조직개발 프로그램으로 구성원들과 함께 팀의 현재를 진단하고 일하는 방식과 관계를 재정렬하는 시간을 가질 예정입니다.<br><br>
-    5/19(월)~5/30(금) 중 참여 가능한 일정을 선택해 주세요!<br>
+    5/19(월)~5/30(금) 중 참여 가능한 일정을 선택해 주세요!  
   </p>
 
   <form id="scheduleForm">
@@ -76,9 +76,8 @@
     <div class="form-section">
       <label for="datetime">팀 워크숍 일정 선택</label>
       <p style="font:300 12px 'OKFont'; line-height:1.4; margin-bottom:10px;">
-      워크숍은 팀별 맞춤형 3시간 과정이며, 하단의 신청 현황을 참고하여 신청 부탁드립니다.<br><br>
-      신청 일정이 중복될 경우 사전 조율을 진행하오나,<br>
-      조율이 어려울 경우 선착순을 기준으로 일정이 확정될 수 있는 점 미리 양해 부탁드립니다.
+        워크숍은 팀별 맞춤형 3시간 과정입니다.<br>
+        3시간 단위로 일정(09:00~18:00)을 선택해 주세요.
       </p>
       <div class="calendar-container">
         <div class="calendar-header">
@@ -128,18 +127,12 @@
     const dateInput    = document.getElementById('datetime');
     const cardsContainer = document.getElementById('bookingCards');
 
-    async function loadData() {
-      try {
-        const res = await fetch(URL);
-        return await res.json();
-      } catch {
-        return [];
-      }
-    }
-
-    async function render() {
-      const bookings = await loadData();
-      // 신청 현황 카드
+    // 신청 현황 로드 및 렌더
+    async function renderBookings() {
+      const bookings = await (async () => {
+        try { const res = await fetch(URL); return await res.json(); }
+        catch { return []; }
+      })();
       cardsContainer.innerHTML = '';
       if (bookings.length) {
         bookings.sort((a,b)=>a.datetime.localeCompare(b.datetime));
@@ -151,8 +144,10 @@
       } else {
         cardsContainer.innerHTML = '<p>아직 신청된 일정이 없습니다.</p>';
       }
+    }
 
-      // 캘린더 그리기
+    // 캘린더 렌더
+    function renderCalendar() {
       calendarGrid.innerHTML = '';
       const timeSlots = ['09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00'];
       for (let d = 19; d <= 30; d++) {
@@ -160,21 +155,43 @@
         const dow = date.getDay();
         if (dow === 0 || dow === 6) continue;
         const cell = document.createElement('div'); cell.className = 'calendar-cell';
-        const num = document.createElement('div'); num.className='date-num'; num.textContent=d; cell.appendChild(num);
-        const wrap = document.createElement('div'); wrap.className='time-slots';
+        const num = document.createElement('div'); num.className = 'date-num'; num.textContent = d; cell.appendChild(num);
+        const wrap = document.createElement('div'); wrap.className = 'time-slots';
         timeSlots.forEach(t => {
-          const btn = document.createElement('span'); btn.className='time-slot'; btn.textContent=t;
+          const btn = document.createElement('span'); btn.className = 'time-slot'; btn.textContent = t;
           if (t <= '15:00') {
             btn.addEventListener('click', () => {
-              wrap.querySelectorAll('.time-slot').forEach(s=>s.classList.remove('selected'));
+              wrap.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
               const slots = Array.from(wrap.children);
               const idx = slots.indexOf(btn);
-              slots.slice(idx, idx+3).forEach(s=>s.classList.add('selected'));
+              slots.slice(idx, idx+3).forEach(s => s.classList.add('selected'));
               const start = btn.textContent;
-              const end = String(parseInt(start)+3).padStart(2,'0')+':00';
+              const end = String(parseInt(start)+3).padStart(2,'0') + ':00';
               dateInput.value = `2025-05-${String(d).padStart(2,'0')} ${start} ~ ${end}`;
             });
           } else {
             btn.classList.add('disabled');
           }
           wrap.appendChild(btn);
+        });
+        cell.appendChild(wrap);
+        calendarGrid.appendChild(cell);
+      }
+    }
+
+    document.getElementById('scheduleForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      await fetch(URL, { method: 'POST', body: new FormData(this) });
+      this.reset();
+      await renderBookings();
+      alert('신청이 완료되었습니다!');
+    });
+
+    // 초기 렌더 + 주기 갱신
+    renderCalendar();
+    await renderBookings();
+    setInterval(renderBookings, 30000);
+  })();
+  </script>
+</body>
+</html>
